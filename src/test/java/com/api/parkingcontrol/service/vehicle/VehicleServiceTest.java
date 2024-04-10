@@ -1,5 +1,7 @@
 package com.api.parkingcontrol.service.vehicle;
 
+import com.api.parkingcontrol.builder.dto.vehicle.VehicleDtoBuilder;
+import com.api.parkingcontrol.builder.entity.vehicle.VehicleEntityBuilder;
 import com.api.parkingcontrol.exception.response.BadRequestException;
 import com.api.parkingcontrol.exception.response.InternalServerErrorException;
 import com.api.parkingcontrol.exception.response.NotFoundException;
@@ -31,31 +33,24 @@ class VehicleServiceTest {
 
     private final VehicleService service;
 
+    private final VehicleDtoBuilder dtoBuilder;
+    private final VehicleEntityBuilder entityBuilder;
+
     @Autowired
     public VehicleServiceTest(VehicleService service) {
         this.service = service;
+        this.dtoBuilder = new VehicleDtoBuilder();
+        this.entityBuilder = new VehicleEntityBuilder();
     }
 
     @Test
     void should_ReturnSavedVehicle_When_Save() {
-        VehicleDto dtoExpected = VehicleDto.builder()
-                .brand("Fiat")
-                .model("Strada")
-                .color("Vermelho")
-                .plate("RTF-1234")
-                .type(1)
-                .build();
+        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(null);
 
         final UUID idExpected = UUID.randomUUID();
 
-        VehicleEntity savedEntity = VehicleEntity.builder()
-                .id(idExpected)
-                .brand(dtoExpected.getBrand())
-                .model(dtoExpected.getModel())
-                .color(dtoExpected.getColor())
-                .plate(dtoExpected.getPlate())
-                .type(dtoExpected.getType())
-                .build();
+        VehicleEntity savedEntity = this.entityBuilder.getCarEntity(dtoExpected);
+        savedEntity.setId(idExpected);
 
         when(this.mockVehicleRepository.save(any(VehicleEntity.class))).thenReturn(savedEntity);
 
@@ -70,13 +65,7 @@ class VehicleServiceTest {
 
     @Test
     void should_ThrowsInternalServerErrorException_When_NotSave(){
-        VehicleDto dtoExpected = VehicleDto.builder()
-                .brand("Fiat")
-                .model("Strada")
-                .color("Vermelho")
-                .plate("RTF-1234")
-                .type(1)
-                .build();
+        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(null);
 
         when(this.mockVehicleRepository.save(any(VehicleEntity.class))).thenThrow(OptimisticLockingFailureException.class);
         assertThrows(InternalServerErrorException.class, () -> this.service.save(dtoExpected));
@@ -84,13 +73,7 @@ class VehicleServiceTest {
 
     @Test
     void should_DontThrowsInternalServerErrorException_When_DeleteVehicle(){
-        VehicleDto dtoExpected = VehicleDto.builder()
-                .brand("Fiat")
-                .model("Strada")
-                .color("Vermelho")
-                .plate("RTF-1234")
-                .type(1)
-                .build();
+        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(null);
 
         doNothing().when(this.mockVehicleRepository).delete(any(VehicleEntity.class));
         assertDoesNotThrow(() -> this.service.delete(dtoExpected));
@@ -98,13 +81,7 @@ class VehicleServiceTest {
 
     @Test
     void should_ThrowsInternalServerErrorException_When_NotDeleteVehicle(){
-        VehicleDto dtoExpected = VehicleDto.builder()
-                .brand("Fiat")
-                .model("Strada")
-                .color("Vermelho")
-                .plate("RTF-1234")
-                .type(1)
-                .build();
+        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(null);
 
         doThrow(OptimisticLockingFailureException.class).when(this.mockVehicleRepository).delete(any(VehicleEntity.class));
         assertThrows(InternalServerErrorException.class, () -> this.service.delete(dtoExpected));
@@ -113,31 +90,15 @@ class VehicleServiceTest {
     @Test
     void should_ReturnVehicle_When_FindVehicle(){
         final UUID idExpected = UUID.randomUUID();
-        final String brandExpected = "Fiat";
-        final String modelExpected = "Strada";
-        final String colorExpected = "Vermelho";
-        final String plateExpected = "RTF-1234";
-        final int typeExpected = 1;
 
-        Optional<VehicleEntity> optEntityFound = Optional.ofNullable(VehicleEntity.builder()
-                .id(idExpected)
-                .brand(brandExpected)
-                .model(modelExpected)
-                .color(colorExpected)
-                .plate(plateExpected)
-                .type(typeExpected)
-                .build());
+        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(idExpected);
+        Optional<VehicleEntity> optEntityFound = Optional.ofNullable(this.entityBuilder.getCarEntity(dtoExpected));
 
         when(this.mockVehicleRepository.findById(any(UUID.class))).thenReturn(optEntityFound);
         VehicleDto dtoActual = this.service.findById(idExpected);
 
         assertNotNull(dtoActual);
-        assertEquals(idExpected, dtoActual.getId());
-        assertEquals(brandExpected, dtoActual.getBrand());
-        assertEquals(modelExpected, dtoActual.getModel());
-        assertEquals(colorExpected, dtoActual.getColor());
-        assertEquals(plateExpected, dtoActual.getPlate());
-        assertEquals(typeExpected, dtoActual.getType());
+        assertThat(dtoActual).isEqualTo(dtoExpected);
     }
 
     @Test
@@ -155,32 +116,12 @@ class VehicleServiceTest {
 
     @Test
     void should_ReturnUpdatedVehicle_When_VehicleExistsAndUpdates(){
-        VehicleDto dtoExpected = VehicleDto.builder()
-                .id(UUID.randomUUID())
-                .brand("Fiat")
-                .model("Strada")
-                .color("Vermelho")
-                .plate("RTF-1234")
-                .type(1)
-                .build();
+        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(UUID.randomUUID());
 
-        VehicleDto foundVehicle = VehicleDto.builder()
-                .id(dtoExpected.getId())
-                .brand(dtoExpected.getBrand())
-                .model(dtoExpected.getModel())
-                .color(dtoExpected.getColor())
-                .plate("Preto")
-                .type(dtoExpected.getType())
-                .build();
+        VehicleDto foundVehicle = this.dtoBuilder.getCarDto(dtoExpected.getId());
+        foundVehicle.setColor("Preto");
 
-        VehicleEntity updatedEntity = VehicleEntity.builder()
-                .id(dtoExpected.getId())
-                .brand(dtoExpected.getBrand())
-                .model(dtoExpected.getModel())
-                .color(dtoExpected.getColor())
-                .plate(dtoExpected.getPlate())
-                .type(dtoExpected.getType())
-                .build();
+        VehicleEntity updatedEntity = this.entityBuilder.getCarEntity(dtoExpected);
 
         doReturn(foundVehicle).when(this.spyService).findById(any(UUID.class));
         when(this.mockVehicleRepository.save(any(VehicleEntity.class))).thenReturn(updatedEntity);
@@ -192,23 +133,10 @@ class VehicleServiceTest {
 
     @Test
     void should_ThrowsInternalServerErrorException_When_NotUpdateVehicle(){
-        VehicleDto dtoExpected = VehicleDto.builder()
-                .id(UUID.randomUUID())
-                .brand("Fiat")
-                .model("Strada")
-                .color("Vermelho")
-                .plate("RTF-1234")
-                .type(1)
-                .build();
+        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(UUID.randomUUID());
 
-        VehicleDto foundVehicle = VehicleDto.builder()
-                .id(dtoExpected.getId())
-                .brand(dtoExpected.getBrand())
-                .model(dtoExpected.getModel())
-                .color("Preto")
-                .plate(dtoExpected.getPlate())
-                .type(dtoExpected.getType())
-                .build();
+        VehicleDto foundVehicle = this.dtoBuilder.getCarDto(dtoExpected.getId());
+        foundVehicle.setColor("Preto");
 
         doReturn(foundVehicle).when(this.spyService).findById(any(UUID.class));
         when(this.mockVehicleRepository.save(any(VehicleEntity.class))).thenThrow(OptimisticLockingFailureException.class);
