@@ -8,7 +8,7 @@ public interface VehicleService {
 
     VehicleDto save(VehicleDto vehicleDto);
 
-    void delete(VehicleDto vehicleDto);
+    void delete(UUID id);
 
     VehicleDto findById(UUID id);
 

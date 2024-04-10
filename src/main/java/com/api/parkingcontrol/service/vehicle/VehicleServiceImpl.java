@@ -37,8 +37,9 @@ public class VehicleServiceImpl implements VehicleService{
     }
 
     @Override
-    public void delete(VehicleDto vehicleDto) {
+    public void delete(UUID id) {
         try{
+            VehicleDto vehicleDto = this.findById(id);
             this.repository.delete(this.mapper.dtoToEntity(vehicleDto));
         }catch (OptimisticLockingFailureException e) {
             throw new InternalServerErrorException(e.getMessage());
