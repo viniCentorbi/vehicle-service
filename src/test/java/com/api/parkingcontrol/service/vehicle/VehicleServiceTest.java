@@ -45,7 +45,8 @@ class VehicleServiceTest {
 
     @Test
     void should_ReturnSavedVehicle_When_Save() {
-        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(null);
+        UUID idDto = null;
+        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(idDto);
 
         final UUID idExpected = UUID.randomUUID();
 
@@ -65,7 +66,8 @@ class VehicleServiceTest {
 
     @Test
     void should_ThrowsInternalServerErrorException_When_NotSave(){
-        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(null);
+        UUID idDto = null;
+        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(idDto);
 
         when(this.mockVehicleRepository.save(any(VehicleEntity.class))).thenThrow(OptimisticLockingFailureException.class);
         assertThrows(InternalServerErrorException.class, () -> this.service.save(dtoExpected));
@@ -73,7 +75,8 @@ class VehicleServiceTest {
 
     @Test
     void should_DontThrowsInternalServerErrorException_When_DeleteVehicle(){
-        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(null);
+        UUID idDto = null;
+        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(idDto);
 
         doNothing().when(this.mockVehicleRepository).delete(any(VehicleEntity.class));
         assertDoesNotThrow(() -> this.service.delete(dtoExpected));
@@ -81,7 +84,8 @@ class VehicleServiceTest {
 
     @Test
     void should_ThrowsInternalServerErrorException_When_NotDeleteVehicle(){
-        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(null);
+        UUID idDto = null;
+        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(idDto);
 
         doThrow(OptimisticLockingFailureException.class).when(this.mockVehicleRepository).delete(any(VehicleEntity.class));
         assertThrows(InternalServerErrorException.class, () -> this.service.delete(dtoExpected));
