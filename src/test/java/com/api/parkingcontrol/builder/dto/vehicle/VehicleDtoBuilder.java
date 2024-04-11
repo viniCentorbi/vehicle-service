@@ -28,4 +28,15 @@ public class VehicleDtoBuilder {
                 .type(entity.getType())
                 .build();
     }
+
+    public VehicleDto getCarPostDto(){
+        return VehicleDto.builder()
+                .id(null)
+                .brand("Chevrolet")
+                .model("Monsa")
+                .color("Vinho")
+                .plate("ESA-1346")
+                .type(1)
+                .build();
+    }
 }
