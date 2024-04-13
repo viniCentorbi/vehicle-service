@@ -1,3 +1,17 @@
 spring:
   application:
     name: parkingcontrol
+  datasource:
+    url: jdbc:postgresql://localhost:5432/parking_control
+    username: admin
+    password: adm!n123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
