@@ -36,7 +36,7 @@ class VehicleControllerTest {
     }
 
     @Test
-    void should_ReturnResponseEntityOkAndVehicleDto_When_SaveVehicle(){
+    void should_ReturnVehicleDto_When_SaveVehicle(){
         VehicleDto postDto = this.dtoBuilder.getCarPostDto();
 
         VehicleDto dtoExpected = this.dtoBuilder.getCarPostDto();
@@ -132,6 +132,5 @@ class VehicleControllerTest {
                 .isNotNull()
                 .isEqualTo((HttpStatusCode.valueOf(HttpStatus.NO_CONTENT.value())));
     }
-
 }
 
