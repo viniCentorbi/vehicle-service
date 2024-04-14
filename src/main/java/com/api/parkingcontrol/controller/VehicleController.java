@@ -31,13 +31,13 @@ public class VehicleController {
         return ResponseEntity.ok(this.service.update(putDto));
     }
 
-    @GetMapping
-    public ResponseEntity<VehicleDto> findById(@RequestParam UUID id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<VehicleDto> findById(@PathVariable(value = "id") UUID id) {
         return ResponseEntity.ok(this.service.findById(id));
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> delete(@RequestParam UUID id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable(value = "id") UUID id) {
         this.service.delete(id);
         return ResponseEntity.noContent().build();
     }
