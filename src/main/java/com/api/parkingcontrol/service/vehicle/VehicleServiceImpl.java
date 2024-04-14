@@ -8,7 +8,7 @@ import com.api.parkingcontrol.model.dto.vehicle.VehicleDto;
 import com.api.parkingcontrol.model.entity.vehicle.VehicleEntity;
 import com.api.parkingcontrol.repository.vehicle.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -31,7 +31,7 @@ public class VehicleServiceImpl implements VehicleService{
         try{
             VehicleEntity savedVehicle = this.repository.save(this.mapper.dtoToEntity(vehicleDto));
             return this.mapper.entityToDto(savedVehicle);
-        }catch (OptimisticLockingFailureException e) {
+        }catch (DataAccessException e) {
             throw new InternalServerErrorException(e.getMessage());
         }
     }
@@ -41,7 +41,7 @@ public class VehicleServiceImpl implements VehicleService{
         try{
             VehicleDto vehicleDto = this.findById(id);
             this.repository.delete(this.mapper.dtoToEntity(vehicleDto));
-        }catch (OptimisticLockingFailureException e) {
+        }catch (DataAccessException e) {
             throw new InternalServerErrorException(e.getMessage());
         }
     }
@@ -67,7 +67,7 @@ public class VehicleServiceImpl implements VehicleService{
             VehicleEntity updatedVehicle = this.repository.save(this.mapper.dtoToEntity(foundVehicle));
 
             return this.mapper.entityToDto(updatedVehicle);
-        }catch (OptimisticLockingFailureException e){
+        }catch (DataAccessException e){
             throw new InternalServerErrorException(e.getMessage());
         }
     }
