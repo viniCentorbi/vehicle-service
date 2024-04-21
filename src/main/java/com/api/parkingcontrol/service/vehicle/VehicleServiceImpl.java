@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,14 +50,18 @@ public class VehicleServiceImpl implements VehicleService{
     @Override
     public VehicleDto findById(UUID id) {
         try{
+            if(Objects.isNull(id)){
+                throw new BadRequestException("Id can't be null!");
+            }
+
             Optional<VehicleEntity> optVehicle = this.repository.findById(id);
 
             if (optVehicle.isEmpty()) {
                 throw new NotFoundException("Vehicle not found!");
             }
             return this.mapper.entityToDto(optVehicle.get());
-        }catch (IllegalArgumentException e){
-            throw new BadRequestException("Id can't be null!");
+        }catch (DataAccessException e){
+            throw new InternalServerErrorException(e.getMessage());
         }
     }
 
