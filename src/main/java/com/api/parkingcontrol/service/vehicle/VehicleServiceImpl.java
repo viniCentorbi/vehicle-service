@@ -30,6 +30,12 @@ public class VehicleServiceImpl implements VehicleService{
     @Override
     public VehicleDto save(VehicleDto vehicleDto) {
         try{
+
+            if(Objects.nonNull(vehicleDto.getId())){
+                throw new BadRequestException("ID must be null to save a vehicle! Use the PUT endpoint if you want to" +
+                        " update an existing vehicle.");
+            }
+
             VehicleEntity savedVehicle = this.repository.save(this.mapper.dtoToEntity(vehicleDto));
             return this.mapper.entityToDto(savedVehicle);
         }catch (DataAccessException e) {
