@@ -19,6 +19,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.http.*;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -93,6 +95,30 @@ class VehicleControllerITCase {
             assertThat(response.getBody().getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
             assertThat(response.getBody().getFieldError()).isNotNull().isNotEmpty().hasSize(3);
         }
+
+        @Transactional
+        @Rollback
+        @Test
+        void should_Return200_When_VehicleIsValid(){
+            ResponseEntity<VehicleDto> response = restTemplate.postForEntity("/vehicle", dtoBuilder.getCarPostDto(),
+                    VehicleDto.class);
+            defaultValidation(response, HttpStatus.OK);
+        }
+
+        @Transactional
+        @Rollback
+        @Test
+        void should_ReturnSavedVehicleWithId_When_VehicleIsValid(){
+            VehicleDto vehicleExpected = dtoBuilder.getCarPostDto();
+
+            ResponseEntity<VehicleDto> response = restTemplate.postForEntity("/vehicle", vehicleExpected, VehicleDto.class);
+
+            VehicleDto vehicleActual = response.getBody();
+            assertThat(vehicleActual).isNotNull();
+            assertThat(vehicleActual.getId()).isNotNull();
+            assertThat(vehicleActual).usingRecursiveComparison().ignoringFields("id").isEqualTo(vehicleExpected);
+
+        }
     }
 
     @Nested
@@ -128,6 +154,26 @@ class VehicleControllerITCase {
 
             defaultValidation(response, HttpStatus.INTERNAL_SERVER_ERROR);
             defaultExceptionDetailsValidation(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        @Transactional
+        @Rollback
+        @Test
+        void should_Return200AndFindedVehicle_When_FindVehicle(){
+            VehicleDto postDto = dtoBuilder.getCarPostDto();
+
+            ResponseEntity<VehicleDto> postResponse = restTemplate.postForEntity("/vehicle", postDto, VehicleDto.class);
+
+            VehicleDto vehicleExpected = postResponse.getBody();
+            assertThat(vehicleExpected).isNotNull();
+
+            ResponseEntity<VehicleDto> getResponse = restTemplate.getForEntity("/vehicle/" + vehicleExpected.getId(),
+                    VehicleDto.class);
+
+            VehicleDto vehicleActual = getResponse.getBody();
+
+            defaultValidation(getResponse, HttpStatus.OK);
+            assertThat(vehicleActual).isNotNull().usingRecursiveComparison().isEqualTo(vehicleExpected);
         }
     }
 
@@ -170,6 +216,32 @@ class VehicleControllerITCase {
             defaultValidation(response, HttpStatus.BAD_REQUEST);
             defaultExceptionDetailsValidation(response, HttpStatus.BAD_REQUEST);
         }
+
+        @Transactional
+        @Rollback
+        @Test
+        void should_Return200AndUpdatedVehicle_When_FindVehicle(){
+            //Save vehicle
+            VehicleDto postDto = dtoBuilder.getCarPostDto();
+
+            ResponseEntity<VehicleDto> postResponse = restTemplate.postForEntity("/vehicle", postDto, VehicleDto.class);
+
+            VehicleDto expectedVehicle = postResponse.getBody();
+            assertThat(expectedVehicle).isNotNull();
+
+            //Update vehicle
+            expectedVehicle.setColor("Black");
+
+            HttpEntity<VehicleDto> requestEntity = new HttpEntity<>(expectedVehicle, DEFAULT_HEADERS);
+
+            ResponseEntity<VehicleDto> putResponse = restTemplate.exchange("/vehicle", HttpMethod.PUT, requestEntity,
+                    VehicleDto.class);
+
+            VehicleDto vehicleActual = putResponse.getBody();
+
+            defaultValidation(putResponse, HttpStatus.OK);
+            assertThat(vehicleActual).isNotNull().usingRecursiveComparison().isEqualTo(expectedVehicle);
+        }
     }
 
     @Nested
@@ -196,6 +268,33 @@ class VehicleControllerITCase {
             defaultValidation(response, HttpStatus.INTERNAL_SERVER_ERROR);
             defaultExceptionDetailsValidation(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        @Transactional
+        @Rollback
+        @Test
+        void should_Return204AndVehicleNotFoundAfterDeleting_When_DeleteVehicle(){
+            //Save vehicle
+            VehicleDto postDto = dtoBuilder.getCarPostDto();
+
+            ResponseEntity<VehicleDto> postResponse = restTemplate.postForEntity("/vehicle", postDto, VehicleDto.class);
+
+            VehicleDto savedVehicle = postResponse.getBody();
+            assertThat(savedVehicle).isNotNull();
+
+            //Delete vehicle
+            ResponseEntity<Void> response = restTemplate.exchange("/vehicle/{id}", HttpMethod.DELETE,
+                    null, Void.class, savedVehicle.getId());
+
+            assertThat(response).isNotNull();
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+            //Find vehicle
+            ResponseEntity<VehicleDto> getResponse = restTemplate.getForEntity("/vehicle/" + savedVehicle.getId(),
+                    VehicleDto.class);
+
+            assertThat(getResponse.getStatusCode()).isNotNull().isEqualTo(HttpStatus.NOT_FOUND);
+        }
+
     }
 
     private void defaultValidation(ResponseEntity<?> response, HttpStatus status) {
