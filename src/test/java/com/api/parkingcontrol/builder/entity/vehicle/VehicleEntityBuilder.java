@@ -13,7 +13,7 @@ public class VehicleEntityBuilder {
                 .brand("Ford")
                 .model("Fiesta")
                 .color("Prata")
-                .plate("ABC-1234")
+                .plate("ABC1234")
                 .type(1)
                 .build();
     }

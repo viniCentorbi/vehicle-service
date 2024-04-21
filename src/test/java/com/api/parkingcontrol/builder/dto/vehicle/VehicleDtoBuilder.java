@@ -13,7 +13,7 @@ public class VehicleDtoBuilder {
                 .brand("Fiat")
                 .model("Strada")
                 .color("Vermelho")
-                .plate("RTF-1234")
+                .plate("RTF1234")
                 .type(1)
                 .build();
     }
@@ -35,7 +35,7 @@ public class VehicleDtoBuilder {
                 .brand("Chevrolet")
                 .model("Monsa")
                 .color("Vinho")
-                .plate("ESA-1346")
+                .plate("ESA1346")
                 .type(1)
                 .build();
     }
