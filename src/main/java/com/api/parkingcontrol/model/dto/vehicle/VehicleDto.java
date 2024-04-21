@@ -2,6 +2,7 @@ package com.api.parkingcontrol.model.dto.vehicle;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -25,6 +26,7 @@ public class VehicleDto {
     private String color;
 
     @NotBlank
+    @Size(min = 7, max = 7)
     private String plate;
 
     @Positive

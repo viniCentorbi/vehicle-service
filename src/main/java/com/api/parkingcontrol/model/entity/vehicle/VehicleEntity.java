@@ -30,7 +30,7 @@ public class VehicleEntity implements Serializable {
     @Column(name="color", nullable = false)
     private String color;
 
-    @Column(name="plate", nullable = false)
+    @Column(name="plate", nullable = false, length = 7)
     private String plate;
 
     @Column(name="type", nullable = false)
