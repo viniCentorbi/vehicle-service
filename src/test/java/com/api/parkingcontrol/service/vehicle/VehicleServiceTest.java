@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.OptimisticLockingFailureException;
 
 import java.util.Optional;
@@ -117,8 +118,14 @@ class VehicleServiceTest {
     }
 
     @Test
+    void should_ThrowsInternalServerErrorException_When_CantFindVehicle(){
+        UUID id = UUID.randomUUID();
+        when(this.mockVehicleRepository.findById(any())).thenThrow(DataRetrievalFailureException.class);
+        assertThrows(InternalServerErrorException.class, () -> this.service.findById(id));
+    }
+
+    @Test
     void should_ThrowsBadRequestException_When_IdIsNull(){
-        when(this.mockVehicleRepository.findById(any())).thenThrow(IllegalArgumentException.class);
         assertThrows(BadRequestException.class, () -> this.service.findById(null));
     }
 
