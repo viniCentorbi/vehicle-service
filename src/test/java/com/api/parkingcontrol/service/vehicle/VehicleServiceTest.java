@@ -75,6 +75,12 @@ class VehicleServiceTest {
     }
 
     @Test
+    void should_ThrowsBadRequestException_When_IdIsNotNullInSaveOperation(){
+        VehicleDto dtoExpected = this.dtoBuilder.getCarDto(UUID.randomUUID());
+        assertThrows(BadRequestException.class, () -> this.service.save(dtoExpected));
+    }
+
+    @Test
     void should_DontThrowsInternalServerErrorException_When_DeleteVehicle(){
         UUID idDto = UUID.randomUUID();
         VehicleDto dtoExpected = this.dtoBuilder.getCarDto(idDto);
