@@ -74,8 +74,8 @@ public class VehicleServiceImpl implements VehicleService{
     @Override
     public VehicleDto update(VehicleDto dto) {
         try{
-            VehicleDto foundVehicle = findById(dto.getId());
-            VehicleEntity updatedVehicle = this.repository.save(this.mapper.dtoToEntity(foundVehicle));
+            findById(dto.getId());
+            VehicleEntity updatedVehicle = this.repository.save(this.mapper.dtoToEntity(dto));
 
             return this.mapper.entityToDto(updatedVehicle);
         }catch (DataAccessException e){
