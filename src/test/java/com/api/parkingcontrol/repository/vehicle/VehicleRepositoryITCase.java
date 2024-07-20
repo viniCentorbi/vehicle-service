@@ -4,6 +4,9 @@ import com.api.parkingcontrol.model.entity.vehicle.VehicleEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,5 +104,45 @@ class VehicleRepositoryITCase {
 
         Optional<VehicleEntity> entityAcual = this.repository.findById(entitySaved.getId());
         assertTrue(entityAcual.isPresent());
+    }
+
+    @Transactional
+    @Rollback
+    @Test
+    void given_VehiclesExistInDatabase_when_FindVehicle_then_ReturnVehiclePageWithFirstAndSecondSavedVehicle(){
+        VehicleEntity firstEntitySaved = VehicleEntity.builder()
+                .brand("Ford")
+                .model("Fiesta")
+                .color("Prata")
+                .plate("ABC1234")
+                .type(1)
+                .build();
+
+        VehicleEntity secondEntitySaved = VehicleEntity.builder()
+                .brand("Chevrolet")
+                .model("Camaro")
+                .color("Amarelo")
+                .plate("DEF6789")
+                .type(1)
+                .build();
+
+        VehicleEntity thirdEntitySaved = VehicleEntity.builder()
+                .brand("Honda")
+                .model("PCX")
+                .color("Preto")
+                .plate("YTH1234")
+                .type(2)
+                .build();
+
+        this.repository.save(firstEntitySaved);
+        this.repository.save(secondEntitySaved);
+        this.repository.save(thirdEntitySaved);
+
+        Page<VehicleEntity> actual = this.repository.findAll(PageRequest.of(0, 2));
+
+        assertThat(actual).isNotNull();
+        assertThat(actual.getTotalElements()).isEqualTo(3);
+        assertThat(actual.getNumberOfElements()).isEqualTo(2);
+        assertThat(actual.getContent()).containsExactlyInAnyOrder(firstEntitySaved, secondEntitySaved);
     }
 }
