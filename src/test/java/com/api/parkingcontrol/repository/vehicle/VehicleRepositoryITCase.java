@@ -145,4 +145,44 @@ class VehicleRepositoryITCase {
         assertThat(actual.getNumberOfElements()).isEqualTo(2);
         assertThat(actual.getContent()).containsExactlyInAnyOrder(firstEntitySaved, secondEntitySaved);
     }
+
+    @Transactional
+    @Rollback
+    @Test
+    void given_VehiclesWithDifferentTypesExistInDatabase_when_SearchVehicleByTypes_then_ReturnVehiclePageWithSpecificType(){
+        VehicleEntity firstEntitySaved = VehicleEntity.builder()
+                .brand("Ford")
+                .model("Fiesta")
+                .color("Prata")
+                .plate("ABC1234")
+                .type(1)
+                .build();
+
+        VehicleEntity secondEntitySaved = VehicleEntity.builder()
+                .brand("Honda")
+                .model("Honda ADV")
+                .color("Prata")
+                .plate("DEF6789")
+                .type(2)
+                .build();
+
+        VehicleEntity thirdEntitySaved = VehicleEntity.builder()
+                .brand("Honda")
+                .model("PCX")
+                .color("Preto")
+                .plate("YTH1234")
+                .type(2)
+                .build();
+
+        this.repository.save(firstEntitySaved);
+        this.repository.save(secondEntitySaved);
+        this.repository.save(thirdEntitySaved);
+
+        Page<VehicleEntity> actual = this.repository.findAllByType(2, PageRequest.of(0, 2));
+
+        assertThat(actual).isNotNull();
+        assertThat(actual.getTotalElements()).isEqualTo(2);
+        assertThat(actual.getNumberOfElements()).isEqualTo(2);
+        assertThat(actual.getContent()).containsExactlyInAnyOrder(secondEntitySaved, thirdEntitySaved);
+    }
 }
