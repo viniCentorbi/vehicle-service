@@ -91,7 +91,11 @@ public class VehicleServiceImpl implements VehicleService{
 
     @Override
     public ResponsePageDto<VehicleDto> findAll(int pageNumber, int pageSize) {
-        Page<VehicleEntity> pageEntity = this.repository.findAll(PageRequest.of(pageNumber, pageSize));
-        return this.pageMapper.pageEntityToPageDto(pageEntity);
+        try{
+            Page<VehicleEntity> pageEntity = this.repository.findAll(PageRequest.of(pageNumber, pageSize));
+            return this.pageMapper.pageEntityToPageDto(pageEntity);
+        } catch (IllegalArgumentException e){
+            throw new BadRequestException(e.getMessage());
+        }
     }
 }
