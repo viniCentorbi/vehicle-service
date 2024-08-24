@@ -8,9 +8,8 @@ import com.api.parkingcontrol.model.dto.page.ResponsePageDto;
 import com.api.parkingcontrol.model.dto.vehicle.VehicleDto;
 import com.api.parkingcontrol.model.entity.vehicle.VehicleEntity;
 import com.api.parkingcontrol.repository.vehicle.VehicleRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import jakarta.persistence.Table;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -22,8 +21,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.http.*;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 import java.util.Objects;
@@ -46,17 +44,25 @@ class VehicleControllerITCase {
     private final VehicleDtoBuilder dtoBuilder;
     private final VehicleEntityBuilder entityBuilder;
 
+    private final JdbcTemplate jdbcTemplate;
+
     @Autowired
-    public VehicleControllerITCase(TestRestTemplate restTemplate) {
+    public VehicleControllerITCase(TestRestTemplate restTemplate, JdbcTemplate jdbcTemplate) {
         this.restTemplate = restTemplate;
         this.dtoBuilder = new VehicleDtoBuilder();
         this.entityBuilder = new VehicleEntityBuilder();
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @BeforeAll
     static void setUp(){
         DEFAULT_HEADERS = new HttpHeaders();
         DEFAULT_HEADERS.setContentType(MediaType.APPLICATION_JSON);
+    }
+
+    @AfterEach
+    void tearDown() {
+        jdbcTemplate.execute("DELETE FROM "+VehicleEntity.class.getAnnotation(Table.class).name());
     }
 
     @Nested
@@ -100,8 +106,6 @@ class VehicleControllerITCase {
             assertThat(response.getBody().getFieldError()).isNotNull().isNotEmpty().hasSize(3);
         }
 
-        @Transactional
-        @Rollback
         @Test
         void should_Return200_When_VehicleIsValid(){
             ResponseEntity<VehicleDto> response = restTemplate.postForEntity("/vehicle", dtoBuilder.getCarPostDto(),
@@ -109,8 +113,6 @@ class VehicleControllerITCase {
             defaultValidation(response, HttpStatus.OK);
         }
 
-        @Transactional
-        @Rollback
         @Test
         void should_ReturnSavedVehicleWithId_When_VehicleIsValid(){
             VehicleDto vehicleExpected = dtoBuilder.getCarPostDto();
@@ -160,8 +162,6 @@ class VehicleControllerITCase {
             defaultExceptionDetailsValidation(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        @Transactional
-        @Rollback
         @Test
         void should_Return200AndFindedVehicle_When_FindVehicle(){
             VehicleDto postDto = dtoBuilder.getCarPostDto();
@@ -264,8 +264,6 @@ class VehicleControllerITCase {
             defaultExceptionDetailsValidation(response, HttpStatus.BAD_REQUEST);
         }
 
-        @Transactional
-        @Rollback
         @Test
         void should_Return200AndUpdatedVehicle_When_FindVehicle(){
             //Save vehicle
@@ -316,8 +314,6 @@ class VehicleControllerITCase {
             defaultExceptionDetailsValidation(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        @Transactional
-        @Rollback
         @Test
         void should_Return204AndVehicleNotFoundAfterDeleting_When_DeleteVehicle(){
             //Save vehicle
