@@ -5,6 +5,8 @@ import com.api.parkingcontrol.builder.entity.vehicle.VehicleEntityBuilder;
 import com.api.parkingcontrol.exception.response.BadRequestException;
 import com.api.parkingcontrol.exception.response.InternalServerErrorException;
 import com.api.parkingcontrol.exception.response.NotFoundException;
+import com.api.parkingcontrol.mapper.vehicle.VehiclePageMapper;
+import com.api.parkingcontrol.model.dto.page.ResponsePageDto;
 import com.api.parkingcontrol.model.dto.vehicle.VehicleDto;
 import com.api.parkingcontrol.model.entity.vehicle.VehicleEntity;
 import com.api.parkingcontrol.repository.vehicle.VehicleRepository;
@@ -15,7 +17,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,6 +35,8 @@ class VehicleServiceTest {
 
     @MockBean
     private VehicleRepository mockVehicleRepository;
+    @MockBean
+    private VehiclePageMapper mockVehiclePageMapper;
     @SpyBean
     private VehicleService spyService;
 
@@ -162,5 +170,35 @@ class VehicleServiceTest {
         doReturn(foundVehicle).when(this.spyService).findById(any(UUID.class));
         when(this.mockVehicleRepository.save(any(VehicleEntity.class))).thenThrow(OptimisticLockingFailureException.class);
         assertThrows(InternalServerErrorException.class, () -> this.spyService.update(dtoExpected));
+    }
+
+    @Test
+    void given_PageNumberAndPageSize_when_ListVehicles_then_ReturnVehiclePage(){
+        //Vehicles
+        VehicleEntity firstEntity = this.entityBuilder.getCarEntity(UUID.randomUUID());
+        VehicleEntity secondEntity = this.entityBuilder.getCarEntity(UUID.randomUUID());
+
+        //Given
+        int pageNumber = 0;
+        int pageSize = 2;
+
+        //Expected
+        ResponsePageDto<VehicleDto> expected = ResponsePageDto.<VehicleDto>builder()
+                .currentPage(pageNumber)
+                .pageSize(pageSize)
+                .totalPages(1)
+                .totalItems(4)
+                .listContent(List.of(dtoBuilder.getCarDto(firstEntity), dtoBuilder.getCarDto(secondEntity))).build();
+
+        //When
+        Page<VehicleEntity> pageEntity = new PageImpl<>(List.of(firstEntity, secondEntity),
+                PageRequest.of(pageNumber, pageSize), expected.getTotalItems());
+
+        when(this.mockVehicleRepository.findAll((PageRequest.of(pageNumber, pageSize)))).thenReturn(pageEntity);
+        when(this.mockVehiclePageMapper.pageEntityToPageDto(pageEntity)).thenReturn(expected);
+
+        //Then
+        ResponsePageDto<VehicleDto> actual = this.service.findAll(pageNumber, pageSize);
+        assertThat(actual).isNotNull().usingRecursiveComparison().isEqualTo(expected);
     }
 }
