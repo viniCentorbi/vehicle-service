@@ -11,6 +11,10 @@ import com.api.parkingcontrol.model.dto.vehicle.VehicleDto;
 import com.api.parkingcontrol.model.entity.vehicle.VehicleEntity;
 import com.api.parkingcontrol.repository.vehicle.VehicleRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -200,5 +204,15 @@ class VehicleServiceTest {
         //Then
         ResponsePageDto<VehicleDto> actual = this.service.findAll(pageNumber, pageSize);
         assertThat(actual).isNotNull().usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "0, -1",
+            "-1, 2",
+            "-1, -1"
+    })
+    void given_InvalidParameters_when_ListVehicles_then_ThrowsBadRequestException(int pageNumber, int pageSize){
+        assertThrows(BadRequestException.class,  () -> this.service.findAll(pageNumber, pageSize));
     }
 }
