@@ -25,6 +25,7 @@ import org.springframework.http.*;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -191,6 +192,35 @@ class VehicleControllerITCase {
 
             defaultValidation(response, HttpStatus.BAD_REQUEST);
             defaultExceptionDetailsValidation(response, HttpStatus.BAD_REQUEST);
+        }
+
+        @Test
+        void given_ValidPageNumberOrPageSize_when_ListVehicle_then_Return200AndVehiclePage(){
+
+            VehicleDto firstResponse = restTemplate.postForEntity("/vehicle", dtoBuilder.getCarPostDto(), VehicleDto.class).getBody();
+            VehicleDto secondResponse = restTemplate.postForEntity("/vehicle", dtoBuilder.getCarPostDto(), VehicleDto.class).getBody();
+            restTemplate.postForEntity("/vehicle", dtoBuilder.getCarPostDto(), VehicleDto.class).getBody();
+
+            ResponsePageDto<VehicleDto> expected =  ResponsePageDto.<VehicleDto>builder()
+                    .totalPages(2)
+                    .totalItems(3)
+                    .pageSize(2)
+                    .currentPage(0)
+                    .listContent(List.of(firstResponse, secondResponse)).build();
+
+            String url = "/vehicle/findAll?pageNumber={pageNumber}&pageSize={pageSize}";
+            ParameterizedTypeReference<ResponsePageDto<VehicleDto>> responseType = new ParameterizedTypeReference<>() {};
+            ResponseEntity<ResponsePageDto<VehicleDto>> actual = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    responseType,
+                    0,
+                    2
+            );
+
+            defaultValidation(actual, HttpStatus.OK);
+            assertThat(actual.getBody()).usingRecursiveComparison().isEqualTo(expected);
         }
     }
 
