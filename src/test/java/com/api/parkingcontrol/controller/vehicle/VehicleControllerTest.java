@@ -2,16 +2,22 @@ package com.api.parkingcontrol.controller.vehicle;
 
 import com.api.parkingcontrol.builder.dto.vehicle.VehicleDtoBuilder;
 import com.api.parkingcontrol.controller.VehicleController;
+import com.api.parkingcontrol.model.dto.page.ResponsePageDto;
 import com.api.parkingcontrol.model.dto.vehicle.VehicleDto;
+import com.api.parkingcontrol.model.entity.vehicle.VehicleEntity;
 import com.api.parkingcontrol.service.vehicle.VehicleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -131,6 +137,30 @@ class VehicleControllerTest {
         assertThat(response.getStatusCode())
                 .isNotNull()
                 .isEqualTo((HttpStatusCode.valueOf(HttpStatus.NO_CONTENT.value())));
+    }
+
+    @Test
+    void given_PageNumberAndPageSize_when_ListVehicles_then_ReturnResponsePageDto(){
+        //Given
+        int pageNumber = 0;
+        int pageSize = 2;
+
+        //Expected
+        ResponsePageDto<VehicleDto> expected = ResponsePageDto.<VehicleDto>builder()
+                .currentPage(pageNumber)
+                .pageSize(pageSize)
+                .totalPages(1)
+                .totalItems(4)
+                .listContent(List.of(dtoBuilder.getCarDto(UUID.randomUUID()), dtoBuilder.getCarDto(UUID.randomUUID()))).build();
+
+        //When
+        when(this.mockService.findAll(pageNumber, pageSize)).thenReturn(expected);
+
+        //Then
+        ResponseEntity<ResponsePageDto<VehicleDto>> actual = this.controller.findAll(pageNumber, pageSize);
+        assertNotNull(actual);
+        assertEquals(HttpStatusCode.valueOf(HttpStatus.OK.value()), actual.getStatusCode());
+        assertThat(actual.getBody()).usingRecursiveComparison().isEqualTo(expected);
     }
 }
 
