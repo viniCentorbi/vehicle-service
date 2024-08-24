@@ -1,5 +1,6 @@
 package com.api.parkingcontrol.controller;
 
+import com.api.parkingcontrol.model.dto.page.ResponsePageDto;
 import com.api.parkingcontrol.model.dto.vehicle.VehicleDto;
 import com.api.parkingcontrol.service.vehicle.VehicleService;
 import jakarta.validation.Valid;
@@ -40,5 +41,11 @@ public class VehicleController {
     public ResponseEntity<Void> delete(@PathVariable(value = "id") UUID id) {
         this.service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/findAll")
+    public ResponseEntity<ResponsePageDto<VehicleDto>> findAll( @RequestParam(defaultValue = "0") int pageNumber,
+                                                                @RequestParam(defaultValue = "10") int pageSize) {
+        return ResponseEntity.ok(this.service.findAll(pageNumber, pageSize));
     }
 }
