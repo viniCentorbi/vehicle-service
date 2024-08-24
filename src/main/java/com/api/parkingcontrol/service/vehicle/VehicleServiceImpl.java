@@ -4,11 +4,15 @@ import com.api.parkingcontrol.exception.response.BadRequestException;
 import com.api.parkingcontrol.exception.response.InternalServerErrorException;
 import com.api.parkingcontrol.exception.response.NotFoundException;
 import com.api.parkingcontrol.mapper.vehicle.VehicleMapper;
+import com.api.parkingcontrol.mapper.vehicle.VehiclePageMapper;
+import com.api.parkingcontrol.model.dto.page.ResponsePageDto;
 import com.api.parkingcontrol.model.dto.vehicle.VehicleDto;
 import com.api.parkingcontrol.model.entity.vehicle.VehicleEntity;
 import com.api.parkingcontrol.repository.vehicle.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -20,11 +24,13 @@ public class VehicleServiceImpl implements VehicleService{
 
     private final VehicleRepository repository;
     private final VehicleMapper mapper;
+    private final VehiclePageMapper pageMapper;
 
     @Autowired
-    public VehicleServiceImpl(VehicleRepository repository, VehicleMapper mapper) {
+    public VehicleServiceImpl(VehicleRepository repository, VehicleMapper mapper, VehiclePageMapper pageMapper) {
         this.repository = repository;
         this.mapper = mapper;
+        this.pageMapper = pageMapper;
     }
 
     @Override
@@ -81,5 +87,11 @@ public class VehicleServiceImpl implements VehicleService{
         }catch (DataAccessException e){
             throw new InternalServerErrorException(e.getMessage());
         }
+    }
+
+    @Override
+    public ResponsePageDto<VehicleDto> findAll(int pageNumber, int pageSize) {
+        Page<VehicleEntity> pageEntity = this.repository.findAll(PageRequest.of(pageNumber, pageSize));
+        return this.pageMapper.pageEntityToPageDto(pageEntity);
     }
 }
