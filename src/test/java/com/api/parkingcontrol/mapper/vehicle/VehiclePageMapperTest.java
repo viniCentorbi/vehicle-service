@@ -1,4 +1,4 @@
-package com.api.parkingcontrol.mapper.page;
+package com.api.parkingcontrol.mapper.vehicle;
 
 import com.api.parkingcontrol.builder.dto.vehicle.VehicleDtoBuilder;
 import com.api.parkingcontrol.builder.entity.vehicle.VehicleEntityBuilder;
