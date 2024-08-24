@@ -21,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -214,5 +215,16 @@ class VehicleServiceTest {
     })
     void given_InvalidParameters_when_ListVehicles_then_ThrowsBadRequestException(int pageNumber, int pageSize){
         assertThrows(BadRequestException.class,  () -> this.service.findAll(pageNumber, pageSize));
+    }
+
+    @Test
+    void given_ErrorInDatabase_when_ListVehicles_then_ThrowsInternalServerErrorException(){
+
+        int pageNumber = 0;
+        int pageSize = 999999;
+
+        when(this.mockVehicleRepository.findAll(PageRequest.of(pageNumber, pageSize)))
+                .thenThrow(QueryTimeoutException.class);
+        assertThrows(InternalServerErrorException.class,  () -> this.service.findAll(pageNumber, pageSize));
     }
 }
