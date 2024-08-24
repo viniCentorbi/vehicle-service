@@ -4,6 +4,7 @@ import com.api.parkingcontrol.builder.dto.vehicle.VehicleDtoBuilder;
 import com.api.parkingcontrol.builder.entity.vehicle.VehicleEntityBuilder;
 import com.api.parkingcontrol.exception.details.ExceptionDetails;
 import com.api.parkingcontrol.exception.details.FieldErrorsExceptionDetails;
+import com.api.parkingcontrol.model.dto.page.ResponsePageDto;
 import com.api.parkingcontrol.model.dto.vehicle.VehicleDto;
 import com.api.parkingcontrol.model.entity.vehicle.VehicleEntity;
 import com.api.parkingcontrol.repository.vehicle.VehicleRepository;
@@ -11,11 +12,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.http.*;
@@ -174,6 +177,20 @@ class VehicleControllerITCase {
 
             defaultValidation(getResponse, HttpStatus.OK);
             assertThat(vehicleActual).isNotNull().usingRecursiveComparison().isEqualTo(vehicleExpected);
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+                "0, -1",
+                "-1, 2",
+                "-1, -1"
+        })
+        void given_InvalidPageNumberOrPageSize_when_ListVehicle_then_Return400AndExceptionDetails(int pageNumber, int pageSize){
+            String url = "/vehicle/findAll?pageNumber={pageNumber}&pageSize={pageSize}";
+            ResponseEntity<ExceptionDetails> response = restTemplate.getForEntity(url, ExceptionDetails.class, pageNumber, pageSize);
+
+            defaultValidation(response, HttpStatus.BAD_REQUEST);
+            defaultExceptionDetailsValidation(response, HttpStatus.BAD_REQUEST);
         }
     }
 
