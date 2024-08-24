@@ -96,6 +96,8 @@ public class VehicleServiceImpl implements VehicleService{
             return this.pageMapper.pageEntityToPageDto(pageEntity);
         } catch (IllegalArgumentException e){
             throw new BadRequestException(e.getMessage());
+        } catch (DataAccessException e){
+            throw new InternalServerErrorException(e.getMessage());
         }
     }
 }
