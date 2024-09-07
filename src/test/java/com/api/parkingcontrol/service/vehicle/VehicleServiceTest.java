@@ -227,4 +227,37 @@ class VehicleServiceTest {
                 .thenThrow(QueryTimeoutException.class);
         assertThrows(InternalServerErrorException.class,  () -> this.service.findAll(pageNumber, pageSize));
     }
+
+    @Test
+    void given_PageNumberAndPageSizeAndVehicleType_when_ListVehicles_then_ReturnVehiclePageOfSpecifiedType(){
+        //Setup
+        VehicleEntity firstEntity = this.entityBuilder.getCarEntity(UUID.randomUUID());
+        VehicleEntity secondEntity = this.entityBuilder.getCarEntity(UUID.randomUUID());
+
+        //Given
+        int pageNumber = 0;
+        int pageSize = 2;
+        int vehicleType = 1;
+
+        //Expected
+        ResponsePageDto<VehicleDto> expected = ResponsePageDto.<VehicleDto>builder()
+                .currentPage(pageNumber)
+                .pageSize(pageSize)
+                .totalPages(1)
+                .totalItems(4)
+                .listContent(List.of(dtoBuilder.getCarDto(firstEntity), dtoBuilder.getCarDto(secondEntity))).build();
+
+
+        //When
+        Page<VehicleEntity> pageEntity = new PageImpl<>(List.of(firstEntity, secondEntity),
+                PageRequest.of(pageNumber, pageSize), expected.getTotalItems());
+
+        when(this.mockVehicleRepository.findAllByType(vehicleType, (PageRequest.of(pageNumber, pageSize)))).thenReturn(pageEntity);
+        when(this.mockVehiclePageMapper.pageEntityToPageDto(pageEntity)).thenReturn(expected);
+
+        //Then
+        ResponsePageDto<VehicleDto> actual = this.service.findAllByType(vehicleType, pageNumber, pageSize);
+        assertThat(actual).isNotNull().usingRecursiveComparison().isEqualTo(expected);
+    }
+
 }
