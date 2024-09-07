@@ -1,5 +1,6 @@
 package com.api.parkingcontrol.controller;
 
+import com.api.parkingcontrol.enums.vehicle.EnumVehicleType;
 import com.api.parkingcontrol.model.dto.page.ResponsePageDto;
 import com.api.parkingcontrol.model.dto.vehicle.VehicleDto;
 import com.api.parkingcontrol.service.vehicle.VehicleService;
@@ -47,5 +48,12 @@ public class VehicleController {
     public ResponseEntity<ResponsePageDto<VehicleDto>> findAll( @RequestParam(defaultValue = "0") int pageNumber,
                                                                 @RequestParam(defaultValue = "10") int pageSize) {
         return ResponseEntity.ok(this.service.findAll(pageNumber, pageSize));
+    }
+
+    @GetMapping("/findAllByType")
+    public ResponseEntity<ResponsePageDto<VehicleDto>> findAllByType(@RequestParam EnumVehicleType type,
+                                                                     @RequestParam(defaultValue = "0") int pageNumber,
+                                                                     @RequestParam(defaultValue = "10") int pageSize) {
+        return ResponseEntity.ok(this.service.findAllByType(type, pageNumber, pageSize));
     }
 }
