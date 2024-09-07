@@ -2,6 +2,7 @@ package com.api.parkingcontrol.service.vehicle;
 
 import com.api.parkingcontrol.builder.dto.vehicle.VehicleDtoBuilder;
 import com.api.parkingcontrol.builder.entity.vehicle.VehicleEntityBuilder;
+import com.api.parkingcontrol.enums.vehicle.EnumVehicleType;
 import com.api.parkingcontrol.exception.response.BadRequestException;
 import com.api.parkingcontrol.exception.response.InternalServerErrorException;
 import com.api.parkingcontrol.exception.response.NotFoundException;
@@ -237,7 +238,7 @@ class VehicleServiceTest {
         //Given
         int pageNumber = 0;
         int pageSize = 2;
-        int vehicleType = 1;
+        EnumVehicleType vehicleType = EnumVehicleType.CAR;
 
         //Expected
         ResponsePageDto<VehicleDto> expected = ResponsePageDto.<VehicleDto>builder()
@@ -252,7 +253,7 @@ class VehicleServiceTest {
         Page<VehicleEntity> pageEntity = new PageImpl<>(List.of(firstEntity, secondEntity),
                 PageRequest.of(pageNumber, pageSize), expected.getTotalItems());
 
-        when(this.mockVehicleRepository.findAllByType(vehicleType, (PageRequest.of(pageNumber, pageSize)))).thenReturn(pageEntity);
+        when(this.mockVehicleRepository.findAllByType(vehicleType.getId(), (PageRequest.of(pageNumber, pageSize)))).thenReturn(pageEntity);
         when(this.mockVehiclePageMapper.pageEntityToPageDto(pageEntity)).thenReturn(expected);
 
         //Then

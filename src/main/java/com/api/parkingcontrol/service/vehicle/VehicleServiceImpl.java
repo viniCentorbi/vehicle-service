@@ -1,5 +1,6 @@
 package com.api.parkingcontrol.service.vehicle;
 
+import com.api.parkingcontrol.enums.vehicle.EnumVehicleType;
 import com.api.parkingcontrol.exception.response.BadRequestException;
 import com.api.parkingcontrol.exception.response.InternalServerErrorException;
 import com.api.parkingcontrol.exception.response.NotFoundException;
@@ -102,8 +103,8 @@ public class VehicleServiceImpl implements VehicleService{
     }
 
     @Override
-    public ResponsePageDto<VehicleDto> findAllByType(int vehicleType, int pageNumber, int pageSize) {
-        Page<VehicleEntity> pageEntity = this.repository.findAllByType(vehicleType, PageRequest.of(pageNumber, pageSize));
+    public ResponsePageDto<VehicleDto> findAllByType(EnumVehicleType vehicleType, int pageNumber, int pageSize) {
+        Page<VehicleEntity> pageEntity = this.repository.findAllByType(vehicleType.getId(), PageRequest.of(pageNumber, pageSize));
         return this.pageMapper.pageEntityToPageDto(pageEntity);
     }
 }

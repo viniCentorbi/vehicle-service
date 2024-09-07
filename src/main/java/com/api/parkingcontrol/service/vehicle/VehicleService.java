@@ -1,5 +1,6 @@
 package com.api.parkingcontrol.service.vehicle;
 
+import com.api.parkingcontrol.enums.vehicle.EnumVehicleType;
 import com.api.parkingcontrol.model.dto.page.ResponsePageDto;
 import com.api.parkingcontrol.model.dto.vehicle.VehicleDto;
 
@@ -17,5 +18,5 @@ public interface VehicleService {
 
     ResponsePageDto<VehicleDto> findAll(int pageNumber, int pageSize);
 
-    ResponsePageDto<VehicleDto> findAllByType(int vehicleType, int pageNumber, int pageSize);
+    ResponsePageDto<VehicleDto> findAllByType(EnumVehicleType vehicleType, int pageNumber, int pageSize);
 }
