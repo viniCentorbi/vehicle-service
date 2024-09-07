@@ -100,4 +100,10 @@ public class VehicleServiceImpl implements VehicleService{
             throw new InternalServerErrorException(e.getMessage());
         }
     }
+
+    @Override
+    public ResponsePageDto<VehicleDto> findAllByType(int vehicleType, int pageNumber, int pageSize) {
+        Page<VehicleEntity> pageEntity = this.repository.findAllByType(vehicleType, PageRequest.of(pageNumber, pageSize));
+        return this.pageMapper.pageEntityToPageDto(pageEntity);
+    }
 }

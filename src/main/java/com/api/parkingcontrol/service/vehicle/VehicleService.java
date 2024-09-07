@@ -16,4 +16,6 @@ public interface VehicleService {
     VehicleDto update(VehicleDto dto);
 
     ResponsePageDto<VehicleDto> findAll(int pageNumber, int pageSize);
+
+    ResponsePageDto<VehicleDto> findAllByType(int vehicleType, int pageNumber, int pageSize);
 }
