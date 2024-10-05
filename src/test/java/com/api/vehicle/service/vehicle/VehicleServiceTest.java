@@ -10,7 +10,7 @@ import com.api.vehicle.mapper.page.VehiclePageMapper;
 import com.api.vehicle.model.dto.page.ResponsePageDto;
 import com.api.vehicle.model.dto.VehicleDto;
 import com.api.vehicle.model.entity.VehicleEntity;
-import com.api.vehicle.repository.vehicle.VehicleRepository;
+import com.api.vehicle.repository.VehicleRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

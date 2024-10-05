@@ -1,4 +1,4 @@
-package com.api.vehicle.repository.vehicle;
+package com.api.vehicle.repository;
 
 import com.api.vehicle.model.entity.VehicleEntity;
 import org.junit.jupiter.api.Test;

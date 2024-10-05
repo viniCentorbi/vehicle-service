@@ -7,7 +7,7 @@ import com.api.vehicle.exception.details.FieldErrorsExceptionDetails;
 import com.api.vehicle.model.dto.page.ResponsePageDto;
 import com.api.vehicle.model.dto.VehicleDto;
 import com.api.vehicle.model.entity.VehicleEntity;
-import com.api.vehicle.repository.vehicle.VehicleRepository;
+import com.api.vehicle.repository.VehicleRepository;
 import jakarta.persistence.Table;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;

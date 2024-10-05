@@ -9,7 +9,7 @@ import com.api.vehicle.mapper.page.VehiclePageMapper;
 import com.api.vehicle.model.dto.page.ResponsePageDto;
 import com.api.vehicle.model.dto.VehicleDto;
 import com.api.vehicle.model.entity.VehicleEntity;
-import com.api.vehicle.repository.vehicle.VehicleRepository;
+import com.api.vehicle.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
