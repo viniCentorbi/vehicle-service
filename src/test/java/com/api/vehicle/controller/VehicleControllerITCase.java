@@ -1,7 +1,7 @@
 package com.api.vehicle.controller;
 
-import com.api.vehicle.builder.dto.vehicle.VehicleDtoBuilder;
-import com.api.vehicle.builder.entity.vehicle.VehicleEntityBuilder;
+import com.api.vehicle.builder.dto.VehicleDtoBuilder;
+import com.api.vehicle.builder.entity.VehicleEntityBuilder;
 import com.api.vehicle.exception.details.ExceptionDetails;
 import com.api.vehicle.exception.details.FieldErrorsExceptionDetails;
 import com.api.vehicle.model.dto.page.ResponsePageDto;

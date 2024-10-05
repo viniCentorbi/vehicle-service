@@ -1,7 +1,6 @@
 package com.api.vehicle.controller;
 
-import com.api.vehicle.builder.dto.vehicle.VehicleDtoBuilder;
-import com.api.vehicle.controller.VehicleController;
+import com.api.vehicle.builder.dto.VehicleDtoBuilder;
 import com.api.vehicle.model.dto.page.ResponsePageDto;
 import com.api.vehicle.model.dto.VehicleDto;
 import com.api.vehicle.service.VehicleService;
