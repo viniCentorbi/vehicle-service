@@ -1,4 +1,4 @@
-package com.api.vehicle.mapper.vehicle;
+package com.api.vehicle.mapper;
 
 import com.api.vehicle.builder.dto.vehicle.VehicleDtoBuilder;
 import com.api.vehicle.builder.entity.vehicle.VehicleEntityBuilder;

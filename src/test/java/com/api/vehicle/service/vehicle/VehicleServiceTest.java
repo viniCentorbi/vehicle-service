@@ -6,7 +6,7 @@ import com.api.vehicle.enums.type.EnumVehicleType;
 import com.api.vehicle.exception.response.BadRequestException;
 import com.api.vehicle.exception.response.InternalServerErrorException;
 import com.api.vehicle.exception.response.NotFoundException;
-import com.api.vehicle.mapper.vehicle.VehiclePageMapper;
+import com.api.vehicle.mapper.page.VehiclePageMapper;
 import com.api.vehicle.model.dto.page.ResponsePageDto;
 import com.api.vehicle.model.dto.vehicle.VehicleDto;
 import com.api.vehicle.model.entity.vehicle.VehicleEntity;

@@ -1,7 +1,8 @@
-package com.api.vehicle.mapper.vehicle;
+package com.api.vehicle.mapper;
 
 import com.api.vehicle.builder.dto.vehicle.VehicleDtoBuilder;
 import com.api.vehicle.builder.entity.vehicle.VehicleEntityBuilder;
+import com.api.vehicle.mapper.page.VehiclePageMapper;
 import com.api.vehicle.model.dto.page.ResponsePageDto;
 import com.api.vehicle.model.dto.vehicle.VehicleDto;
 import com.api.vehicle.model.entity.vehicle.VehicleEntity;
