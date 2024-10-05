@@ -2,7 +2,7 @@ package com.api.vehicle.service.vehicle;
 
 import com.api.vehicle.enums.type.EnumVehicleType;
 import com.api.vehicle.model.dto.page.ResponsePageDto;
-import com.api.vehicle.model.dto.vehicle.VehicleDto;
+import com.api.vehicle.model.dto.VehicleDto;
 
 import java.util.UUID;
 

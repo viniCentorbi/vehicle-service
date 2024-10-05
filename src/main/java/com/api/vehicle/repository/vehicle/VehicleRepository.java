@@ -1,6 +1,6 @@
 package com.api.vehicle.repository.vehicle;
 
-import com.api.vehicle.model.entity.vehicle.VehicleEntity;
+import com.api.vehicle.model.entity.VehicleEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

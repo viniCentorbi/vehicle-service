@@ -1,7 +1,7 @@
 package com.api.vehicle.builder.entity.vehicle;
 
-import com.api.vehicle.model.dto.vehicle.VehicleDto;
-import com.api.vehicle.model.entity.vehicle.VehicleEntity;
+import com.api.vehicle.model.dto.VehicleDto;
+import com.api.vehicle.model.entity.VehicleEntity;
 
 import java.util.UUID;
 

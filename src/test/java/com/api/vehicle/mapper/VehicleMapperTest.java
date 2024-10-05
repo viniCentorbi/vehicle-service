@@ -2,8 +2,8 @@ package com.api.vehicle.mapper;
 
 import com.api.vehicle.builder.dto.vehicle.VehicleDtoBuilder;
 import com.api.vehicle.builder.entity.vehicle.VehicleEntityBuilder;
-import com.api.vehicle.model.dto.vehicle.VehicleDto;
-import com.api.vehicle.model.entity.vehicle.VehicleEntity;
+import com.api.vehicle.model.dto.VehicleDto;
+import com.api.vehicle.model.entity.VehicleEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

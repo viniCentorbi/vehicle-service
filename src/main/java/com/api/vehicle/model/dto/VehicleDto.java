@@ -1,4 +1,4 @@
-package com.api.vehicle.model.dto.vehicle;
+package com.api.vehicle.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;

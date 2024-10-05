@@ -1,6 +1,6 @@
 package com.api.vehicle.repository.vehicle;
 
-import com.api.vehicle.model.entity.vehicle.VehicleEntity;
+import com.api.vehicle.model.entity.VehicleEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

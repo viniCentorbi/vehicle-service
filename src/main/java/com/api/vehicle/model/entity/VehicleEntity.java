@@ -1,4 +1,4 @@
-package com.api.vehicle.model.entity.vehicle;
+package com.api.vehicle.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

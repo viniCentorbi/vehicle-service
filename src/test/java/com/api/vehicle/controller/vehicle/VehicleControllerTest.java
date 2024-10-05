@@ -3,7 +3,7 @@ package com.api.vehicle.controller.vehicle;
 import com.api.vehicle.builder.dto.vehicle.VehicleDtoBuilder;
 import com.api.vehicle.controller.VehicleController;
 import com.api.vehicle.model.dto.page.ResponsePageDto;
-import com.api.vehicle.model.dto.vehicle.VehicleDto;
+import com.api.vehicle.model.dto.VehicleDto;
 import com.api.vehicle.service.vehicle.VehicleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
