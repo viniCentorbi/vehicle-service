@@ -1,4 +1,4 @@
-package com.api.vehicle.enums.vehicle;
+package com.api.vehicle.enums.type;
 
 import lombok.Getter;
 

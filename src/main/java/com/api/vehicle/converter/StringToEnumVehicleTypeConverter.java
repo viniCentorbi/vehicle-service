@@ -3,7 +3,7 @@ package com.api.vehicle.converter;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.Converter;
-import com.api.vehicle.enums.vehicle.EnumVehicleType;
+import com.api.vehicle.enums.type.EnumVehicleType;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -2,7 +2,7 @@ package com.api.vehicle.service.vehicle;
 
 import com.api.vehicle.builder.dto.vehicle.VehicleDtoBuilder;
 import com.api.vehicle.builder.entity.vehicle.VehicleEntityBuilder;
-import com.api.vehicle.enums.vehicle.EnumVehicleType;
+import com.api.vehicle.enums.type.EnumVehicleType;
 import com.api.vehicle.exception.response.BadRequestException;
 import com.api.vehicle.exception.response.InternalServerErrorException;
 import com.api.vehicle.exception.response.NotFoundException;
