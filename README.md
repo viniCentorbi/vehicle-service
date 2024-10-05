@@ -6,8 +6,8 @@ O **Vehicle Service** é um microsserviço que faz parte do sistema de gerenciam
 
 - **Cadastrar Veículo:** Permite registrar novos veículos no sistema.
 - **Consultar Veículo:** Permite a consulta de informações de um veículo específico pelo ID.
-- **Consultar Veículos:** Permite a consulta de informações de todos os veículos cadastrados.
-- **Consulta Páginada de Veículos:** Permite a consulta páginada pelo tipo de veículo (Carro ou Moto).
+- **Consultar Páginada de Veículos:** Permite a consulta de informações de todos os veículos cadastrados.
+- **Consulta Páginada de Veículos pelo Tipo:** Permite a consulta páginada pelo tipo de veículo (Carro ou Moto).
 - **Atualizar Veículo:** Permite a atualização dos dados de um veículo existente.
 - **Excluir Veículo:** Permite a exclusão de um veículo do sistema.
 
