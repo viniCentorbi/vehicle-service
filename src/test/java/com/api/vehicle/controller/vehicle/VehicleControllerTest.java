@@ -4,7 +4,7 @@ import com.api.vehicle.builder.dto.vehicle.VehicleDtoBuilder;
 import com.api.vehicle.controller.VehicleController;
 import com.api.vehicle.model.dto.page.ResponsePageDto;
 import com.api.vehicle.model.dto.VehicleDto;
-import com.api.vehicle.service.vehicle.VehicleService;
+import com.api.vehicle.service.VehicleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package com.api.vehicle.service.vehicle;
+package com.api.vehicle.service;
 
 import com.api.vehicle.enums.type.EnumVehicleType;
 import com.api.vehicle.exception.response.BadRequestException;
