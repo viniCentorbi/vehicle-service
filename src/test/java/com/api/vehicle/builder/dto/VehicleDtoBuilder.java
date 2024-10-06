@@ -1,5 +1,6 @@
 package com.api.vehicle.builder.dto;
 
+import com.api.vehicle.enums.type.EnumVehicleType;
 import com.api.vehicle.model.dto.VehicleDto;
 import com.api.vehicle.model.entity.VehicleEntity;
 
@@ -37,6 +38,17 @@ public class VehicleDtoBuilder {
                 .color("Vinho")
                 .plate("ESA1346")
                 .type(1)
+                .build();
+    }
+
+    public VehicleDto getVehicle(UUID id, EnumVehicleType type){
+        return VehicleDto.builder()
+                .id(id)
+                .brand("Ford")
+                .model("Fiesta")
+                .color("Preto")
+                .plate("EAT1346")
+                .type(type.getId())
                 .build();
     }
 }
