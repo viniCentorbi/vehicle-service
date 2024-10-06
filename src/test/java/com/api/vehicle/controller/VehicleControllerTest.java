@@ -1,10 +1,13 @@
 package com.api.vehicle.controller;
 
 import com.api.vehicle.builder.dto.VehicleDtoBuilder;
+import com.api.vehicle.enums.type.EnumVehicleType;
 import com.api.vehicle.model.dto.page.ResponsePageDto;
 import com.api.vehicle.model.dto.VehicleDto;
 import com.api.vehicle.service.VehicleService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -153,6 +156,33 @@ class VehicleControllerTest {
 
         //Then
         ResponseEntity<ResponsePageDto<VehicleDto>> actual = this.controller.findAll(pageNumber, pageSize);
+        assertNotNull(actual);
+        assertEquals(HttpStatusCode.valueOf(HttpStatus.OK.value()), actual.getStatusCode());
+        assertThat(actual.getBody()).usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    @ParameterizedTest()
+    @EnumSource(EnumVehicleType.class)
+    void given_PageNumberAndPageSizeAndVehicleType_when_ListVehicles_then_ReturnResponsePageDto(EnumVehicleType type){
+        //Given
+        int pageNumber = 0;
+        int pageSize = 2;
+
+        //Expected
+        ResponsePageDto<VehicleDto> expected = ResponsePageDto.<VehicleDto>builder()
+                .currentPage(pageNumber)
+                .pageSize(pageSize)
+                .totalPages(1)
+                .totalItems(4)
+                .listContent(List.of(dtoBuilder.getVehicle(UUID.randomUUID(), type),
+                        dtoBuilder.getVehicle(UUID.randomUUID(), type)))
+                .build();
+
+        //When
+        when(this.mockService.findAllByType(type, pageNumber, pageSize)).thenReturn(expected);
+
+        //Then
+        ResponseEntity<ResponsePageDto<VehicleDto>> actual = this.controller.findAllByType(type, pageNumber, pageSize);
         assertNotNull(actual);
         assertEquals(HttpStatusCode.valueOf(HttpStatus.OK.value()), actual.getStatusCode());
         assertThat(actual.getBody()).usingRecursiveComparison().isEqualTo(expected);
