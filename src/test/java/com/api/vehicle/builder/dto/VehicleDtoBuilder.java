@@ -15,7 +15,7 @@ public class VehicleDtoBuilder {
                 .model("Strada")
                 .color("Vermelho")
                 .plate("RTF1234")
-                .type(1)
+                .type(EnumVehicleType.CAR.getId())
                 .build();
     }
 
@@ -37,7 +37,7 @@ public class VehicleDtoBuilder {
                 .model("Monsa")
                 .color("Vinho")
                 .plate("ESA1346")
-                .type(1)
+                .type(EnumVehicleType.CAR.getId())
                 .build();
     }
 

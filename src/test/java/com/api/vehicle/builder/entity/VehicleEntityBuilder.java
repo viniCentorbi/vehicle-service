@@ -1,5 +1,6 @@
 package com.api.vehicle.builder.entity;
 
+import com.api.vehicle.enums.type.EnumVehicleType;
 import com.api.vehicle.model.dto.VehicleDto;
 import com.api.vehicle.model.entity.VehicleEntity;
 
@@ -14,7 +15,7 @@ public class VehicleEntityBuilder {
                 .model("Fiesta")
                 .color("Prata")
                 .plate("ABC1234")
-                .type(1)
+                .type(EnumVehicleType.CAR.getId())
                 .build();
     }
 
