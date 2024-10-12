@@ -2,6 +2,7 @@ package com.api.vehicle.controller;
 
 import com.api.vehicle.builder.dto.VehicleDtoBuilder;
 import com.api.vehicle.builder.entity.VehicleEntityBuilder;
+import com.api.vehicle.enums.type.EnumVehicleType;
 import com.api.vehicle.exception.details.ExceptionDetails;
 import com.api.vehicle.exception.details.FieldErrorsExceptionDetails;
 import com.api.vehicle.model.dto.page.ResponsePageDto;
@@ -12,6 +13,7 @@ import jakarta.persistence.Table;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -218,6 +220,35 @@ class VehicleControllerITCase {
                     0,
                     2
             );
+
+            defaultValidation(actual, HttpStatus.OK);
+            assertThat(actual.getBody()).usingRecursiveComparison().isEqualTo(expected);
+        }
+
+        @ParameterizedTest
+        @EnumSource(EnumVehicleType.class)
+        void given_PageNumberAndPageSizeAndVehicleType_when_ListVehicles_then_Return200AndVehiclePage(EnumVehicleType type){
+
+            VehicleDto firstResponse = restTemplate.postForEntity("/vehicle", dtoBuilder.getVehicle(type),
+                    VehicleDto.class).getBody();
+            VehicleDto secondResponse = restTemplate.postForEntity("/vehicle", dtoBuilder.getVehicle(type),
+                    VehicleDto.class).getBody();
+
+            ResponsePageDto<VehicleDto> expected =  ResponsePageDto.<VehicleDto>builder()
+                    .totalPages(1)
+                    .totalItems(2)
+                    .pageSize(2)
+                    .currentPage(0)
+                    .listContent(List.of(firstResponse, secondResponse)).build();
+
+            String url = "/vehicle/findAllByType?type={type}&pageNumber={pageNumber}&pageSize={pageSize}";
+            ParameterizedTypeReference<ResponsePageDto<VehicleDto>> responseType = new ParameterizedTypeReference<>() {};
+            ResponseEntity<ResponsePageDto<VehicleDto>> actual = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    responseType,
+                    type.getId(), 0, 2);
 
             defaultValidation(actual, HttpStatus.OK);
             assertThat(actual.getBody()).usingRecursiveComparison().isEqualTo(expected);
