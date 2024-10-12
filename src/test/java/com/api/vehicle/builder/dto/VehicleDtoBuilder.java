@@ -51,4 +51,15 @@ public class VehicleDtoBuilder {
                 .type(type.getId())
                 .build();
     }
+
+    public VehicleDto getVehicle(EnumVehicleType type){
+        return VehicleDto.builder()
+                .id(null)
+                .brand("Marca")
+                .model("Modelo")
+                .color("Preto")
+                .plate("EAT1346")
+                .type(type.getId())
+                .build();
+    }
 }
