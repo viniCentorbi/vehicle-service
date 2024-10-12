@@ -253,6 +253,17 @@ class VehicleControllerITCase {
             defaultValidation(actual, HttpStatus.OK);
             assertThat(actual.getBody()).usingRecursiveComparison().isEqualTo(expected);
         }
+
+        @ParameterizedTest
+        @ValueSource(ints = {-1, 0, 999})
+        void given_InvalidType_when_ListVehicle_then_Return400AndExceptionDetails(int type){
+            String url = "/vehicle/findAllByType?type={type}&pageNumber={pageNumber}&pageSize={pageSize}";
+            ResponseEntity<ExceptionDetails> response = restTemplate.getForEntity(url, ExceptionDetails.class,
+                    type, 0, 1);
+
+            defaultValidation(response, HttpStatus.BAD_REQUEST);
+            defaultExceptionDetailsValidation(response, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Nested
