@@ -2,6 +2,7 @@ package com.api.vehicle.controller;
 
 import com.api.vehicle.builder.dto.VehicleDtoBuilder;
 import com.api.vehicle.builder.entity.VehicleEntityBuilder;
+import com.api.vehicle.constants.url.Endpoints;
 import com.api.vehicle.enums.type.EnumVehicleType;
 import com.api.vehicle.exception.details.ExceptionDetails;
 import com.api.vehicle.exception.details.FieldErrorsExceptionDetails;
@@ -73,7 +74,7 @@ class VehicleControllerITCase {
         void should_Return500AndExceptionDetails_When_NotSaveVehicle() {
             doThrow(DataIntegrityViolationException.class).when(spyRepository).save(any(VehicleEntity.class));
 
-            ResponseEntity<ExceptionDetails> response = restTemplate.postForEntity("/vehicle", dtoBuilder.getCarPostDto(),
+            ResponseEntity<ExceptionDetails> response = restTemplate.postForEntity(Endpoints.VEHICLE, dtoBuilder.getCarPostDto(),
                     ExceptionDetails.class);
 
             defaultValidation(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,7 +83,7 @@ class VehicleControllerITCase {
 
         @Test
         void should_Return400AndExceptionDetails_When_IdIsNotNull() {
-            ResponseEntity<ExceptionDetails> response = restTemplate.postForEntity("/vehicle", dtoBuilder.getCarDto(UUID.randomUUID()),
+            ResponseEntity<ExceptionDetails> response = restTemplate.postForEntity(Endpoints.VEHICLE, dtoBuilder.getCarDto(UUID.randomUUID()),
                     ExceptionDetails.class);
 
             defaultValidation(response, HttpStatus.BAD_REQUEST);
@@ -97,7 +98,7 @@ class VehicleControllerITCase {
             postDto.setPlate("ABC12345");
             postDto.setType(0);
 
-            ResponseEntity<FieldErrorsExceptionDetails> response = restTemplate.postForEntity("/vehicle", postDto,
+            ResponseEntity<FieldErrorsExceptionDetails> response = restTemplate.postForEntity(Endpoints.VEHICLE, postDto,
                     FieldErrorsExceptionDetails.class);
 
             defaultValidation(response, HttpStatus.BAD_REQUEST);
@@ -110,7 +111,7 @@ class VehicleControllerITCase {
 
         @Test
         void should_Return200_When_VehicleIsValid(){
-            ResponseEntity<VehicleDto> response = restTemplate.postForEntity("/vehicle", dtoBuilder.getCarPostDto(),
+            ResponseEntity<VehicleDto> response = restTemplate.postForEntity(Endpoints.VEHICLE, dtoBuilder.getCarPostDto(),
                     VehicleDto.class);
             defaultValidation(response, HttpStatus.OK);
         }
@@ -119,7 +120,7 @@ class VehicleControllerITCase {
         void should_ReturnSavedVehicleWithId_When_VehicleIsValid(){
             VehicleDto vehicleExpected = dtoBuilder.getCarPostDto();
 
-            ResponseEntity<VehicleDto> response = restTemplate.postForEntity("/vehicle", vehicleExpected, VehicleDto.class);
+            ResponseEntity<VehicleDto> response = restTemplate.postForEntity(Endpoints.VEHICLE, vehicleExpected, VehicleDto.class);
 
             VehicleDto vehicleActual = response.getBody();
             assertThat(vehicleActual).isNotNull();
@@ -135,8 +136,8 @@ class VehicleControllerITCase {
         void should_Return404AndExceptionDetails_When_NotFoundVehicle() {
             doReturn(Optional.empty()).when(spyRepository).findById(any(UUID.class));
 
-            ResponseEntity<ExceptionDetails> response = restTemplate.getForEntity("/vehicle/" + UUID.randomUUID(),
-                    ExceptionDetails.class);
+            ResponseEntity<ExceptionDetails> response = restTemplate.getForEntity(Endpoints.URL_FIND_VEHICLE,
+                    ExceptionDetails.class, UUID.randomUUID());
 
             defaultValidation(response, HttpStatus.NOT_FOUND);
             defaultExceptionDetailsValidation(response, HttpStatus.NOT_FOUND);
@@ -145,8 +146,8 @@ class VehicleControllerITCase {
         @ParameterizedTest
         @ValueSource(strings = {"null", "12345"})
         void should_Return400AndExceptionDetails_When_IdIsInvalid(String invalidID) {
-            ResponseEntity<ExceptionDetails> response = restTemplate.getForEntity("/vehicle/" + invalidID,
-                    ExceptionDetails.class);
+            ResponseEntity<ExceptionDetails> response = restTemplate.getForEntity(Endpoints.URL_FIND_VEHICLE,
+                    ExceptionDetails.class, invalidID);
 
             defaultValidation(response, HttpStatus.BAD_REQUEST);
             defaultExceptionDetailsValidation(response, HttpStatus.BAD_REQUEST);
@@ -157,8 +158,8 @@ class VehicleControllerITCase {
         void should_Return500AndExceptionDetails_When_ErrorOccursDuringOperation() {
             doThrow(DataRetrievalFailureException.class).when(spyRepository).findById(any(UUID.class));
 
-            ResponseEntity<ExceptionDetails> response = restTemplate.getForEntity("/vehicle/" + UUID.randomUUID(),
-                    ExceptionDetails.class);
+            ResponseEntity<ExceptionDetails> response = restTemplate.getForEntity(Endpoints.URL_FIND_VEHICLE,
+                    ExceptionDetails.class, UUID.randomUUID());
 
             defaultValidation(response, HttpStatus.INTERNAL_SERVER_ERROR);
             defaultExceptionDetailsValidation(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -168,13 +169,13 @@ class VehicleControllerITCase {
         void should_Return200AndFindedVehicle_When_FindVehicle(){
             VehicleDto postDto = dtoBuilder.getCarPostDto();
 
-            ResponseEntity<VehicleDto> postResponse = restTemplate.postForEntity("/vehicle", postDto, VehicleDto.class);
+            ResponseEntity<VehicleDto> postResponse = restTemplate.postForEntity(Endpoints.VEHICLE, postDto, VehicleDto.class);
 
             VehicleDto vehicleExpected = postResponse.getBody();
             assertThat(vehicleExpected).isNotNull();
 
-            ResponseEntity<VehicleDto> getResponse = restTemplate.getForEntity("/vehicle/" + vehicleExpected.getId(),
-                    VehicleDto.class);
+            ResponseEntity<VehicleDto> getResponse = restTemplate.getForEntity(Endpoints.URL_FIND_VEHICLE,
+                    VehicleDto.class, vehicleExpected.getId());
 
             VehicleDto vehicleActual = getResponse.getBody();
 
@@ -189,8 +190,7 @@ class VehicleControllerITCase {
                 "-1, -1"
         })
         void given_InvalidPageNumberOrPageSize_when_ListVehicle_then_Return400AndExceptionDetails(int pageNumber, int pageSize){
-            String url = "/vehicle/findAll?pageNumber={pageNumber}&pageSize={pageSize}";
-            ResponseEntity<ExceptionDetails> response = restTemplate.getForEntity(url, ExceptionDetails.class, pageNumber, pageSize);
+            ResponseEntity<ExceptionDetails> response = restTemplate.getForEntity(Endpoints.URL_FIND_ALL_VEHICLES, ExceptionDetails.class, pageNumber, pageSize);
 
             defaultValidation(response, HttpStatus.BAD_REQUEST);
             defaultExceptionDetailsValidation(response, HttpStatus.BAD_REQUEST);
@@ -199,9 +199,9 @@ class VehicleControllerITCase {
         @Test
         void given_ValidPageNumberOrPageSize_when_ListVehicle_then_Return200AndVehiclePage(){
 
-            VehicleDto firstResponse = restTemplate.postForEntity("/vehicle", dtoBuilder.getCarPostDto(), VehicleDto.class).getBody();
-            VehicleDto secondResponse = restTemplate.postForEntity("/vehicle", dtoBuilder.getCarPostDto(), VehicleDto.class).getBody();
-            restTemplate.postForEntity("/vehicle", dtoBuilder.getCarPostDto(), VehicleDto.class).getBody();
+            VehicleDto firstResponse = restTemplate.postForEntity(Endpoints.VEHICLE, dtoBuilder.getCarPostDto(), VehicleDto.class).getBody();
+            VehicleDto secondResponse = restTemplate.postForEntity(Endpoints.VEHICLE, dtoBuilder.getCarPostDto(), VehicleDto.class).getBody();
+            restTemplate.postForEntity(Endpoints.VEHICLE, dtoBuilder.getCarPostDto(), VehicleDto.class).getBody();
 
             ResponsePageDto<VehicleDto> expected =  ResponsePageDto.<VehicleDto>builder()
                     .totalPages(2)
@@ -210,10 +210,9 @@ class VehicleControllerITCase {
                     .currentPage(0)
                     .listContent(List.of(firstResponse, secondResponse)).build();
 
-            String url = "/vehicle/findAll?pageNumber={pageNumber}&pageSize={pageSize}";
             ParameterizedTypeReference<ResponsePageDto<VehicleDto>> responseType = new ParameterizedTypeReference<>() {};
             ResponseEntity<ResponsePageDto<VehicleDto>> actual = restTemplate.exchange(
-                    url,
+                    Endpoints.URL_FIND_ALL_VEHICLES,
                     HttpMethod.GET,
                     null,
                     responseType,
@@ -229,9 +228,9 @@ class VehicleControllerITCase {
         @EnumSource(EnumVehicleType.class)
         void given_PageNumberAndPageSizeAndVehicleType_when_ListVehicles_then_Return200AndVehiclePage(EnumVehicleType type){
 
-            VehicleDto firstResponse = restTemplate.postForEntity("/vehicle", dtoBuilder.getVehicle(type),
+            VehicleDto firstResponse = restTemplate.postForEntity(Endpoints.VEHICLE, dtoBuilder.getVehicle(type),
                     VehicleDto.class).getBody();
-            VehicleDto secondResponse = restTemplate.postForEntity("/vehicle", dtoBuilder.getVehicle(type),
+            VehicleDto secondResponse = restTemplate.postForEntity(Endpoints.VEHICLE, dtoBuilder.getVehicle(type),
                     VehicleDto.class).getBody();
 
             ResponsePageDto<VehicleDto> expected =  ResponsePageDto.<VehicleDto>builder()
@@ -241,10 +240,9 @@ class VehicleControllerITCase {
                     .currentPage(0)
                     .listContent(List.of(firstResponse, secondResponse)).build();
 
-            String url = "/vehicle/findAllByType?type={type}&pageNumber={pageNumber}&pageSize={pageSize}";
             ParameterizedTypeReference<ResponsePageDto<VehicleDto>> responseType = new ParameterizedTypeReference<>() {};
             ResponseEntity<ResponsePageDto<VehicleDto>> actual = restTemplate.exchange(
-                    url,
+                    Endpoints.URL_FIND_ALL_VEHICLES_BY_TYPE,
                     HttpMethod.GET,
                     null,
                     responseType,
@@ -257,8 +255,7 @@ class VehicleControllerITCase {
         @ParameterizedTest
         @ValueSource(ints = {-1, 0, 999})
         void given_InvalidType_when_ListVehicle_then_Return400AndExceptionDetails(int type){
-            String url = "/vehicle/findAllByType?type={type}&pageNumber={pageNumber}&pageSize={pageSize}";
-            ResponseEntity<ExceptionDetails> response = restTemplate.getForEntity(url, ExceptionDetails.class,
+            ResponseEntity<ExceptionDetails> response = restTemplate.getForEntity(Endpoints.URL_FIND_ALL_VEHICLES_BY_TYPE, ExceptionDetails.class,
                     type, 0, 1);
 
             defaultValidation(response, HttpStatus.BAD_REQUEST);
@@ -275,7 +272,7 @@ class VehicleControllerITCase {
 
             HttpEntity<VehicleDto> requestEntity = new HttpEntity<>(dtoBuilder.getCarDto(UUID.randomUUID()), DEFAULT_HEADERS);
 
-            ResponseEntity<ExceptionDetails> response = restTemplate.exchange("/vehicle", HttpMethod.PUT, requestEntity,
+            ResponseEntity<ExceptionDetails> response = restTemplate.exchange(Endpoints.VEHICLE, HttpMethod.PUT, requestEntity,
                     ExceptionDetails.class);
 
             defaultValidation(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -288,7 +285,7 @@ class VehicleControllerITCase {
 
             HttpEntity<VehicleDto> requestEntity = new HttpEntity<>(dtoBuilder.getCarDto(UUID.randomUUID()), DEFAULT_HEADERS);
 
-            ResponseEntity<ExceptionDetails> response = restTemplate.exchange("/vehicle", HttpMethod.PUT, requestEntity,
+            ResponseEntity<ExceptionDetails> response = restTemplate.exchange(Endpoints.VEHICLE, HttpMethod.PUT, requestEntity,
                     ExceptionDetails.class);
 
             defaultValidation(response, HttpStatus.NOT_FOUND);
@@ -299,7 +296,7 @@ class VehicleControllerITCase {
         void should_Return400AndExceptionDetails_When_IdIsNull(){
             HttpEntity<VehicleDto> requestEntity = new HttpEntity<>(dtoBuilder.getCarPostDto(), DEFAULT_HEADERS);
 
-            ResponseEntity<ExceptionDetails> response = restTemplate.exchange("/vehicle", HttpMethod.PUT, requestEntity,
+            ResponseEntity<ExceptionDetails> response = restTemplate.exchange(Endpoints.VEHICLE, HttpMethod.PUT, requestEntity,
                     ExceptionDetails.class);
 
             defaultValidation(response, HttpStatus.BAD_REQUEST);
@@ -311,7 +308,7 @@ class VehicleControllerITCase {
             //Save vehicle
             VehicleDto postDto = dtoBuilder.getCarPostDto();
 
-            ResponseEntity<VehicleDto> postResponse = restTemplate.postForEntity("/vehicle", postDto, VehicleDto.class);
+            ResponseEntity<VehicleDto> postResponse = restTemplate.postForEntity(Endpoints.VEHICLE, postDto, VehicleDto.class);
 
             VehicleDto expectedVehicle = postResponse.getBody();
             assertThat(expectedVehicle).isNotNull();
@@ -321,7 +318,7 @@ class VehicleControllerITCase {
 
             HttpEntity<VehicleDto> requestEntity = new HttpEntity<>(expectedVehicle, DEFAULT_HEADERS);
 
-            ResponseEntity<VehicleDto> putResponse = restTemplate.exchange("/vehicle", HttpMethod.PUT, requestEntity,
+            ResponseEntity<VehicleDto> putResponse = restTemplate.exchange(Endpoints.VEHICLE, HttpMethod.PUT, requestEntity,
                     VehicleDto.class);
 
             VehicleDto vehicleActual = putResponse.getBody();
@@ -337,7 +334,7 @@ class VehicleControllerITCase {
         void should_Return404AndExceptionDetails_When_NotFindVehicleInDeleteOperation() {
             doReturn(Optional.empty()).when(spyRepository).findById(any(UUID.class));
 
-            ResponseEntity<ExceptionDetails> response = restTemplate.exchange("/vehicle/{id}", HttpMethod.DELETE,
+            ResponseEntity<ExceptionDetails> response = restTemplate.exchange(Endpoints.URL_REMOVE_VEHICLE, HttpMethod.DELETE,
                     null, ExceptionDetails.class, UUID.randomUUID());
 
             defaultValidation(response, HttpStatus.NOT_FOUND);
@@ -349,7 +346,7 @@ class VehicleControllerITCase {
             doReturn(Optional.of(entityBuilder.getCarEntity(UUID.randomUUID()))).when(spyRepository).findById(any(UUID.class));
             doThrow(DataIntegrityViolationException.class).when(spyRepository).delete(any(VehicleEntity.class));
 
-            ResponseEntity<ExceptionDetails> response = restTemplate.exchange("/vehicle/{id}", HttpMethod.DELETE,
+            ResponseEntity<ExceptionDetails> response = restTemplate.exchange(Endpoints.URL_REMOVE_VEHICLE, HttpMethod.DELETE,
                     null, ExceptionDetails.class, UUID.randomUUID());
 
             defaultValidation(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -361,21 +358,21 @@ class VehicleControllerITCase {
             //Save vehicle
             VehicleDto postDto = dtoBuilder.getCarPostDto();
 
-            ResponseEntity<VehicleDto> postResponse = restTemplate.postForEntity("/vehicle", postDto, VehicleDto.class);
+            ResponseEntity<VehicleDto> postResponse = restTemplate.postForEntity(Endpoints.VEHICLE, postDto, VehicleDto.class);
 
             VehicleDto savedVehicle = postResponse.getBody();
             assertThat(savedVehicle).isNotNull();
 
             //Delete vehicle
-            ResponseEntity<Void> response = restTemplate.exchange("/vehicle/{id}", HttpMethod.DELETE,
+            ResponseEntity<Void> response = restTemplate.exchange(Endpoints.URL_REMOVE_VEHICLE, HttpMethod.DELETE,
                     null, Void.class, savedVehicle.getId());
 
             assertThat(response).isNotNull();
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
             //Find vehicle
-            ResponseEntity<VehicleDto> getResponse = restTemplate.getForEntity("/vehicle/" + savedVehicle.getId(),
-                    VehicleDto.class);
+            ResponseEntity<VehicleDto> getResponse = restTemplate.getForEntity(Endpoints.URL_FIND_VEHICLE,
+                    VehicleDto.class, savedVehicle.getId());
 
             assertThat(getResponse.getStatusCode()).isNotNull().isEqualTo(HttpStatus.NOT_FOUND);
         }
