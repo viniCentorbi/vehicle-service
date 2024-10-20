@@ -12,28 +12,10 @@ O **Vehicle Service** é um microsserviço que faz parte do sistema de gerenciam
 - **Excluir Veículo:** Permite a exclusão de um veículo do sistema.
 
 ## Tecnologias Utilizadas
+![Java](https://img.shields.io/badge/Java-22%2B-%23f89820?style=for-the-badge&logo=java&logoColor=white)
 
-- **Java 22+**
-- **Spring Boot**
-- **Maven**
-- **PostgreSQL** - Banco de dados
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen?style=for-the-badge&logo=spring-boot)
 
-## Estrutura de Diretórios
+![Maven](https://img.shields.io/badge/Maven-3.9.5-orange?style=for-the-badge&logo=apache-maven&logoColor=white)
 
-```bash
-vehicle-service/
-├── src/
-│   ├── main/
-│   │   ├── java/com/api/vehicle
-│   │   │   ├── controller/
-│   │   │   ├── converter/
-│   │   │   ├── enums/
-│   │   │   ├── exception/
-│   │   │   ├── mapper/
-│   │   │   ├── model/
-│   │   │   ├── repository/
-│   │   │   ├── service/
-│   └── test/
-├── application.yml
-└── pom.xml
-```
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13%2B-blue?style=for-the-badge&logo=postgresql&logoColor=white)
