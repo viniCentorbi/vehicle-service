@@ -19,3 +19,6 @@ O **Vehicle Service** é um microsserviço que faz parte do sistema de gerenciam
 ![Maven](https://img.shields.io/badge/Maven-3.9.5-orange?style=for-the-badge&logo=apache-maven&logoColor=white)
 
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13%2B-blue?style=for-the-badge&logo=postgresql&logoColor=white)
+
+## Cobertura de Testes
+[![Cobertura de testes](https://codecov.io/github/viniCentorbi/vehicle-service/branch/dev/graph/badge.svg?token=FCFADNH0J5)](https://codecov.io/github/viniCentorbi/vehicle-service)
