@@ -97,6 +97,25 @@
 					</includes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.12</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal> <!-- Insere o agente Jacoco para monitorar a execução dos testes -->
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase> <!-- Gera os relatórios após a execução dos testes -->
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
