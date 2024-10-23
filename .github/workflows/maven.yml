@@ -34,3 +34,17 @@ jobs:
 
     - name: Run Unit Tests
       run: mvn test
+
+    - name: Upload JaCoCo Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: jacoco-report
+        path: target/site/jacoco/index.html
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./target/site/jacoco/jacoco.xml
+        flags: unittests
+        name: codecov-coverage
+        fail_ci_if_error: true
