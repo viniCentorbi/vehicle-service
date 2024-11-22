@@ -39,8 +39,8 @@ public class ParkingControlExceptionHandler extends ResponseEntityExceptionHandl
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ExceptionDetails> handlerBadRequestException(BadRequestException e){
-        return new ResponseEntity<>(ExceptionDetails.builder()
+    public ResponseEntity<FieldErrorsExceptionDetails> handlerBadRequestException(BadRequestException e){
+        return new ResponseEntity<>(FieldErrorsExceptionDetails.builder()
                 .title("Bad Request Exception")
                 .status(HttpStatus.BAD_REQUEST.value())
                 .details(Objects.isNull(e.getMessage()) ? DEFAULT_DETAIL : e.getMessage())
@@ -81,7 +81,7 @@ public class ParkingControlExceptionHandler extends ResponseEntityExceptionHandl
 
         FieldErrorsExceptionDetails details = FieldErrorsExceptionDetails.builder()
                 .title("Method Argument Not Valid Exception")
-                .status(status.value())
+                .status(HttpStatus.BAD_REQUEST.value())
                 .details("Invalid Fields! Please check the field(s) error.")
                 .fieldError(fieldErrorMap)
                 .timestamp(LocalDateTime.now())
